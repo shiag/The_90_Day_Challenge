@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#8f3e97</color>
+    <color name="colorPrimaryDark">#853a96</color>
+    <color name="white">#ffffff</color>
+    <color name="colorPrimaryLight">#9a519f</color>
+    <color name="colorPrimaryLightest">#c694c2</color>
+    <color name="help">#c6b194</color>
+    <color name="notDone">#c6949c</color>
+    <color name="defult">#EEEEEE</color>
+    <color name="done">#b5c694</color>
+    <color name="gray">#FFCECECE</color>
+    <color name="grey_800">#424242</color>
+    <color name="yellow">#f9ce1e</color>
+    <color name="grey_300">#bdbcbc</color>
+    <color name="dark_grey">#FF767676</color>
+</resources>

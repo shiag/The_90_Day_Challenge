@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_do_today"
+            android:icon="@drawable/ic_action_content_create"
+            android:title="Do Today" />
+        <item
+            android:id="@+id/nav_archive"
+            android:icon="@drawable/ic_action_av_my_library_books"
+            android:title="Archive" />
+        <item
+            android:id="@+id/nav_help"
+            android:icon="@drawable/ic_action_maps_location_history"
+            android:title="Help" />
+        <item
+            android:id="@+id/nav_not_done"
+            android:icon="@drawable/ic_action_content_report"
+            android:title="Not Done" />
+
+    </group>
+    <item android:title="Settings">
+        <menu>
+            <item
+                android:id="@+id/nav_settings"
+                android:icon="@drawable/ic_action_action_settings"
+                android:title="Settings" />
+            <item
+                android:id="@+id/nav_info"
+                android:icon="@drawable/ic_stat_av_equalizer"
+                android:title="Info" />
+        </menu>
+    </item>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_action_notification_event_note"
+                android:title="Make Appointment" />
+            <item
+                android:id="@+id/nav_link"
+                android:icon="@drawable/ic_stat_action_language"
+                android:title="Ask Maurice" />
+        </menu>
+    </item>
+
+</menu>

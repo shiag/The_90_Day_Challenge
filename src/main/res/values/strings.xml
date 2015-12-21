@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">The 90 Day Challenge</string>
+
+    <string name="navigation_drawer_open"> open drawer</string>
+    <string name="navigation_drawer_close">close drawer</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="notify_n">This will remind you every night to finish the Goals of that day and write your next day Goals. It will remind you at </string>
+    <string name="notify_d">This will remind you every day to finish the Goals of that day. It will remind you at </string>
+    <string name="notify_w1">This will remind you every </string>
+    <string name="notify_w2"> days if you still have unfinished Goals to complete.</string>
+    <string name="title_activity_main3">Main3Activity</string>
+</resources>
