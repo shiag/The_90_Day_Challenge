@@ -21,7 +21,6 @@ import com.sgmasterappsgmail.The90DayChallenge.models.TodoDaily;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;

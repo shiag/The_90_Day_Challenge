@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+//import android.util.Log;
 
 import java.util.Calendar;
 
@@ -16,6 +17,25 @@ public class Alarm {
     public static final int NOTIFICATION_REMINDER_NIGHT = 2;
     private static final int NOTIFICATION_REMINDER_WEEK = 4;
     private static final int NOTIFICATION_REMINDER_DAY = 3;
+
+    public static void checkForNewDay(Context context) {
+        Calendar calendar = Calendar.getInstance();
+        Calendar current = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, 1);
+        calendar.set(Calendar.MINUTE, 0);
+        if (calendar.compareTo(current) <= 0) {
+            calendar.setTimeInMillis(System.currentTimeMillis() + 86400000);
+            calendar.set(Calendar.HOUR_OF_DAY, 1);
+            calendar.set(Calendar.MINUTE, 0);
+        }
+        Intent notifyIntent = new Intent("new_item");
+        PendingIntent pendingIntent = PendingIntent.getBroadcast
+                (context, NOTIFICATION_REMINDER_NIGHT, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                1000 * 60 * 60 * 24, pendingIntent);
+    }
 
     //it return a PendingIntent to be able to cancel it
     public static PendingIntent createAlarmForNight(Context context) {

@@ -6,7 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.util.Log;
+//import android.util.Log;
 import android.view.View;
 
 import com.sgmasterappsgmail.The90DayChallenge.R;
@@ -16,7 +16,7 @@ import com.sgmasterappsgmail.The90DayChallenge.R;
  * Created by shia on 11/16/2015.
  */
 public class PercentView extends View {
-    private static final String TAG = PercentView.class.getSimpleName();
+    // private static final String TAG = PercentView.class.getSimpleName();
     private final Paint paint = new Paint();
     private int background = Color.parseColor("#FFCECECE");
     private int primaryColor = Color.parseColor("#FF00ACC1");
@@ -59,7 +59,7 @@ public class PercentView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        Log.d(TAG, "onDraw");
+        //Log.d(TAG, "onDraw");
         // Clear canvas
         canvas.drawColor(background);
         drawView(canvas);

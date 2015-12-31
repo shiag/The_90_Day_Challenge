@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
+//import android.util.Log;
 
 /**
  * Created by shia on 11/2/2015.
@@ -35,7 +35,7 @@ public class MySqlHelper extends SQLiteOpenHelper {
                     + COLUMN_HELP + " INTEGER, "
                     + COLUMN_DESCRIPTION + " TEXT " +
                     ");";
-    private static final String TAG = "MySqlHelper";
+    // private static final String TAG = "MySqlHelper";
 
     public MySqlHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -43,7 +43,7 @@ public class MySqlHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        Log.d(TAG, "DB created");
+        //Log.d(TAG, "DB created");
         db.execSQL(DATABASE_CREATE);
     }
 
@@ -105,7 +105,7 @@ public class MySqlHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.d(TAG, "DB upgrading. Dropping old table...");
+        //Log.d(TAG, "DB upgrading. Dropping old table...");
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TODO_DAILY);
         onCreate(db);
     }

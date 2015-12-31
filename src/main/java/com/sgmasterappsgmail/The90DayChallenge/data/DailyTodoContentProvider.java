@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
+//import android.util.Log;
 
 /**
  * Created by shia on 11/2/2015.
@@ -17,7 +17,7 @@ import android.util.Log;
 public class DailyTodoContentProvider extends ContentProvider {
     private MySqlHelper sqlHelper;
 
-    private static final String TAG = "DailyContentProvider";
+    //private static final String TAG = "DailyContentProvider";
 
     private static final String AUTHORITY = "com.sgmasterappsgmail.The90DayChallenge.contentprovider";
     private static final String BASE = "dailytodo";
@@ -43,9 +43,7 @@ public class DailyTodoContentProvider extends ContentProvider {
     @Nullable
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        Log.d(TAG, "query");
-        String sl = MySqlHelper.COLUMN_DONE + " = ?";
-        String[] sla = new String[]{"1"};
+        //Log.d(TAG, "query");
         SQLiteQueryBuilder query = new SQLiteQueryBuilder();
         query.setTables(MySqlHelper.TABLE_TODO_DAILY);
         int uriType = mUriMatcher.match(uri);
@@ -77,7 +75,7 @@ public class DailyTodoContentProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        Log.d(TAG, "insert");
+        //Log.d(TAG, "insert");
         int uriType = mUriMatcher.match(uri);
         SQLiteDatabase db = sqlHelper.getWritableDatabase();
         long id = 0;
@@ -98,7 +96,7 @@ public class DailyTodoContentProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        Log.d(TAG, "delete");
+        //Log.d(TAG, "delete");
         int uriType = mUriMatcher.match(uri);
         SQLiteDatabase sqlDB = sqlHelper.getWritableDatabase();
         int rowsDeleted = 0;
@@ -130,7 +128,7 @@ public class DailyTodoContentProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        Log.d(TAG, "update");
+        //Log.d(TAG, "update");
         int uriType = mUriMatcher.match(uri);
         SQLiteDatabase sqlDB = sqlHelper.getWritableDatabase();
         int rowsUpdated = 0;

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+//import android.util.Log;
 import android.widget.TextView;
 
 import com.sgmasterappsgmail.The90DayChallenge.R;
@@ -14,7 +14,7 @@ import com.sgmasterappsgmail.The90DayChallenge.data.MySqlHelper;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class StatusActivity extends AppCompatActivity {
-    private static final String TAG = "StatusActivity";
+    // private static final String TAG = "StatusActivity";
     private int done, help, notDone, empty, all, amountOfDays;
     private TextView dayAmount, perDone, perHelp, perNotDone, perEmpty;
     private PercentView customDone, customHelp, customNotDone, customEmpty;
@@ -38,7 +38,7 @@ public class StatusActivity extends AppCompatActivity {
 
             @Override
             protected Void doInBackground(Void... params) {
-                Log.d(TAG, "in doInBackground");
+                //Log.d(TAG, "in doInBackground");
                 all = sqlHelper.getAllToDo();
                 amountOfDays = sqlHelper.getAllDay() - 1;
                 // should not be divided by 0
@@ -56,7 +56,7 @@ public class StatusActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                Log.d(TAG, "in onPostExecute");
+                //Log.d(TAG, "in onPostExecute");
                 initTextView();
                 initCustomView();
             }
@@ -64,7 +64,8 @@ public class StatusActivity extends AppCompatActivity {
     }
 
     private void initTextView() {
-        dayAmount.setText(amountOfDays + " Days");
+        String days = amountOfDays == 1 ? "Day" : "Days";
+        dayAmount.setText(amountOfDays + " " + days);
         perDone.setText(done + "% is Done!");
         perHelp.setText(help + "% you need Help!");
         perNotDone.setText(notDone + "% is NotDone!");
