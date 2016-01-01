@@ -1,3 +1,4 @@
+
 package com.sgmasterappsgmail.The90DayChallenge.Tools;
 
 import android.content.Context;
@@ -23,7 +24,6 @@ public class MySharedPref {
     public static final String DAY_CHECK = "dayCheck";
     public static final String WEEK_CHECK = "weekCheck";
     public static final String CHECK_APPS_FIRST_LAUNCH = "firstLaunch";
-    public static final String CHECK_IF_NEW_DAY = "newDay";
     public static final String SET_OF_SHIFT = "setForShift";
 
     public static void putIntSharedPref(Context context, String key, int value) {
@@ -84,6 +84,7 @@ public class MySharedPref {
         context.startActivity(email);
        /* try {
             context.startActivity(Intent.createChooser(i, "Choose an email client from..."));
+
         } catch (android.content.ActivityNotFoundException ex) {
             Toast.makeText(context, "No email client installed.",
                     Toast.LENGTH_LONG).show();

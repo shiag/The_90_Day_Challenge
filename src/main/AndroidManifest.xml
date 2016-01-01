@@ -1,41 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.sgmasterappsgmail.The90DayChallenge">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
-        android:name="com.sgmasterappsgmail.The90DayChallenge.activitys.App"
+        android:name=".activitys.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
         tools:replace="android:icon,android:theme">
-        <activity
-            android:name="com.sgmasterappsgmail.The90DayChallenge.activitys.MainActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
 
-        </activity>
+        <activity
+            android:name=".activitys.MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <service
-            android:name="com.sgmasterappsgmail.The90DayChallenge.recivers_service.MyIntentService"
+            android:name=".recivers_service.MyIntentService"
             android:exported="false" />
 
         <receiver
-            android:name="com.sgmasterappsgmail.The90DayChallenge.recivers_service.MyReceiver"
+            android:name=".recivers_service.MyReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="alarm" />
+                <action android:name="new_item" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>
 
         <activity
-            android:name="com.sgmasterappsgmail.The90DayChallenge.activitys.SettingsActivity"
+            android:name=".activitys.SettingsActivity"
             android:label="Settings">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -43,28 +48,31 @@
         </activity>
 
         <provider
-            android:name="com.sgmasterappsgmail.The90DayChallenge.data.DailyTodoContentProvider"
+            android:name=".data.DailyTodoContentProvider"
             android:authorities="com.sgmasterappsgmail.The90DayChallenge.contentprovider"
             android:enabled="true"
             android:exported="false" />
 
         <activity
-            android:name="com.sgmasterappsgmail.The90DayChallenge.activitys.StatusActivity"
+            android:name=".activitys.StatusActivity"
             android:label="Status">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.sgmasterappsgmail.The90DayChallenge.activitys.MainActivity" />
         </activity>
         <activity
-            android:name="com.sgmasterappsgmail.The90DayChallenge.activitys.SplashScreen"
+            android:name=".activitys.SplashScreen"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
+
+        <service
+            android:name=".recivers_service.NewDayService"
+            android:exported="false" />
     </application>
 
 </manifest>

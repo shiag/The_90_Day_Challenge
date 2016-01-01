@@ -3,6 +3,7 @@ package com.sgmasterappsgmail.The90DayChallenge.activitys;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -19,6 +20,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+//import android.util.Log;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +34,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.sgmasterappsgmail.The90DayChallenge.R;
 import com.sgmasterappsgmail.The90DayChallenge.Tools.Alarm;
@@ -43,7 +44,6 @@ import com.sgmasterappsgmail.The90DayChallenge.data.MySqlHelper;
 import com.sgmasterappsgmail.The90DayChallenge.models.TodoDaily;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -53,9 +53,9 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener ,LoaderManager.LoaderCallbacks<Cursor> {
+        implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final String TAG = "MainActivity";
+    // private static final String TAG = "MainActivity";
     private Toolbar toolbar;
     private DrawerLayout drawer;
     private NavigationView navigationView;
@@ -65,8 +65,8 @@ public class MainActivity extends AppCompatActivity
     private TodoDailyAdepter archiveAdepter;
     private TodoDailyAdepter helpAdepter;
     private TodoDailyAdepter notDoneAdepter;
-    private int tabCount,lastDay,thisDay;
-    private Set<String> sendToTom ;
+    private int tabCount;
+    private Set<String> sendToTom;
     public static final int TODAY_LAYOUT = 0;
     public static final int ARCHIVE_LAYOUT = 1;
     public static final int HELP_LAYOUT = 2;
@@ -87,55 +87,39 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ((App) getApplication()).getTracker();
         setContentView(R.layout.activity_main);
-        if(MySharedPref.getBoolSharedPref(this, MySharedPref.CHECK_APPS_FIRST_LAUNCH, true)){
+        if (MySharedPref.getBoolSharedPref(this, MySharedPref.CHECK_APPS_FIRST_LAUNCH, true)) {
             setUpAlarms();
-            MySharedPref.putBoolSharedPref(this,MySharedPref.CHECK_APPS_FIRST_LAUNCH,false);
+            MySharedPref.putBoolSharedPref(this, MySharedPref.CHECK_APPS_FIRST_LAUNCH, false);
         }
         setUpGui();
         getSupportLoaderManager().initLoader(LOADER_TODAY, null, this);
         getSupportLoaderManager().initLoader(LOADER_ARCHIVE, null, this);
         getSupportLoaderManager().initLoader(LOADER_HELP, null, this);
         getSupportLoaderManager().initLoader(LOADER_NOT_DONE, null, this);
-        setCheckForEveryDay();
     }
 
     private void setUpAlarms() {
         Thread alarmThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                Log.d(TAG,"background thread");
                 Alarm.createAlarmForDay(MainActivity.this);
                 Alarm.createAlarmForNight(MainActivity.this);
                 Alarm.createAlarmForWeek(MainActivity.this);
+                Alarm.checkForNewDay(MainActivity.this);
             }
         }
         );
         alarmThread.start();
-        for(int i=0;i<3;i++) {
-            TodoDaily daily = new TodoDaily(i+1);
+        for (int i = 0; i < 3; i++) {
+            TodoDaily daily = new TodoDaily(i + 1);
             getContentResolver().insert(DailyTodoContentProvider.CONTENT_URI, daily.toContentValues());
         }
-    }
-
-    private void setCheckForEveryDay() {
-        Calendar c = Calendar.getInstance();
-        c.setTimeInMillis((System.currentTimeMillis() + 86400000));
-        thisDay = c.get(Calendar.DAY_OF_YEAR);
-        long todayMillis = c.getTimeInMillis();
-        long last = MySharedPref.getLongSharedPref(this,MySharedPref.CHECK_IF_NEW_DAY, System.currentTimeMillis()+86400000);
-        c.setTimeInMillis(last);
-        lastDay = c.get(Calendar.DAY_OF_YEAR);
-        Log.d(TAG, " lastDay " + lastDay + " thisDay " + thisDay);
-        if (lastDay == thisDay) {
-            for(int i=0;i<3;i++) {
-                TodoDaily daily = new TodoDaily(i+1);
-                daily.setDate(todayMillis);
-                getContentResolver().insert(DailyTodoContentProvider.CONTENT_URI, daily.toContentValues());
-            }
-            getSupportLoaderManager().restartLoader(LOADER_TOM, null, this);
-            Log.d(TAG, "ITS the same day");
-            MySharedPref.putLongSharedPref(this, MySharedPref.CHECK_IF_NEW_DAY, todayMillis + 86400000);
+        for (int i = 0; i < 3; i++) {
+            TodoDaily daily = new TodoDaily(i + 1);
+            daily.setDate(System.currentTimeMillis() + 86400000);
+            getContentResolver().insert(DailyTodoContentProvider.CONTENT_URI, daily.toContentValues());
         }
     }
 
@@ -196,7 +180,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
         } else if (id == R.id.nav_share) {
             MySharedPref.sendEmail(MainActivity.this);
-        }else if (id == R.id.nav_link) {
+        } else if (id == R.id.nav_link) {
             Intent webSite = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.askmaurice.com/"));
             startActivity(webSite);
         }
@@ -224,11 +208,10 @@ public class MainActivity extends AppCompatActivity
             MyPagerAdepter adapter = new MyPagerAdepter();
             viewPager.setAdapter(adapter);
 
-            if(getIntent().getBooleanExtra("notdone",false)){
+            if (getIntent().getBooleanExtra("notdone", false)) {
                 // it comes from notDone notification
                 viewPager.setCurrentItem(3);
-            }
-            else {
+            } else {
                 viewPager.setCurrentItem(0);
             }
             viewPager.setOffscreenPageLimit(4);
@@ -241,7 +224,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setUpAdepter() {
-        todayAdepter = new TodoDailyAdepter(MainActivity.this,TodoDailyAdepter.TODAY, new TodoDailyAdepter.ItemClickListener() {
+        todayAdepter = new TodoDailyAdepter(MainActivity.this, TodoDailyAdepter.TODAY, new TodoDailyAdepter.ItemClickListener() {
             @Override
             public void onItemClicked(TodoDaily daily, int icon) {
                 switch (icon) {
@@ -256,7 +239,7 @@ public class MainActivity extends AppCompatActivity
                     case TodoDailyAdepter.HELP_B:
                         setPopUpForHelp(daily);
                         break;
-                    case  TodoDailyAdepter.NOT_DONE_B:
+                    case TodoDailyAdepter.NOT_DONE_B:
                         setPopUpForNotDone(daily);
                         break;
                     case TodoDailyAdepter.SHIFT:
@@ -267,7 +250,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
-        archiveAdepter = new TodoDailyAdepter(MainActivity.this, TodoDailyAdepter.ARCHIVE,new TodoDailyAdepter.ItemClickListener() {
+        archiveAdepter = new TodoDailyAdepter(MainActivity.this, TodoDailyAdepter.ARCHIVE, new TodoDailyAdepter.ItemClickListener() {
             @Override
             public void onItemClicked(TodoDaily daily, int icon) {
                 switch (icon) {
@@ -298,7 +281,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
-        helpAdepter = new TodoDailyAdepter(MainActivity.this, TodoDailyAdepter.HELP,new TodoDailyAdepter.ItemClickListener() {
+        helpAdepter = new TodoDailyAdepter(MainActivity.this, TodoDailyAdepter.HELP, new TodoDailyAdepter.ItemClickListener() {
             @Override
             public void onItemClicked(TodoDaily daily, int icon) {
                 switch (icon) {
@@ -326,7 +309,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
-        notDoneAdepter = new TodoDailyAdepter(MainActivity.this, TodoDailyAdepter.NOT_DONE,new TodoDailyAdepter.ItemClickListener() {
+        notDoneAdepter = new TodoDailyAdepter(MainActivity.this, TodoDailyAdepter.NOT_DONE, new TodoDailyAdepter.ItemClickListener() {
             @Override
             public void onItemClicked(TodoDaily daily, int icon) {
                 switch (icon) {
@@ -407,8 +390,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void setPopUpForDone(final TodoDaily daily) {
-        Log.d(TAG, "done");
-        SweetAlertDialog pDialog = new SweetAlertDialog(MainActivity.this,SweetAlertDialog.SUCCESS_TYPE);
+        //Log.d(TAG, "done");
+        SweetAlertDialog pDialog = new SweetAlertDialog(MainActivity.this, SweetAlertDialog.SUCCESS_TYPE);
         pDialog.setTitleText("Done ?")
                 .setConfirmText("Yes!")
                 .setCancelText("Cancel")
@@ -462,8 +445,8 @@ public class MainActivity extends AppCompatActivity
                 .show();
     }
 
-    public void setPopUpForNotDone(final  TodoDaily daily) {
-        SweetAlertDialog pDialog = new SweetAlertDialog(MainActivity.this,SweetAlertDialog.WARNING_TYPE);
+    public void setPopUpForNotDone(final TodoDaily daily) {
+        SweetAlertDialog pDialog = new SweetAlertDialog(MainActivity.this, SweetAlertDialog.WARNING_TYPE);
         pDialog.setTitleText("Not Done!");
         pDialog.setContentText("Are you sure you don't want to finish this goal?");
         pDialog.setConfirmText("Yes!");
@@ -489,8 +472,8 @@ public class MainActivity extends AppCompatActivity
                 .show();
     }
 
-    public void setPopUpForShift(final  TodoDaily daily) {
-        Log.d(TAG, "Shift");
+    public void setPopUpForShift(final TodoDaily daily) {
+        //Log.d(TAG, "Shift");
         SweetAlertDialog pDialog = new SweetAlertDialog(MainActivity.this);
         pDialog
                 .setTitleText("Shift!")
@@ -502,8 +485,8 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onClick(SweetAlertDialog sDialog) {
                         sendToTom = new HashSet<>(MySharedPref.getSetSharedPref(MainActivity.this, MySharedPref.SET_OF_SHIFT, new HashSet<String>()));
-                        if(daily.getTittle()!=null||daily.getDescription()!=null) {
-                            sendToTom.add(daily.getTittle()+" " + "," +" "+ daily.getDescription());
+                        if (daily.getTittle() != null || daily.getDescription() != null) {
+                            sendToTom.add(daily.getTittle() + " " + "," + " " + daily.getDescription());
                             MySharedPref.putSetSharedPref(MainActivity.this, MySharedPref.SET_OF_SHIFT, sendToTom);
                             // have to restartLoader because in this loader i called data.close it should not run by any other changes
                             getSupportLoaderManager().restartLoader(LOADER_TOM, null, MainActivity.this);
@@ -525,17 +508,17 @@ public class MainActivity extends AppCompatActivity
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String today = MySqlHelper.COLUMN_ID + " DESC LIMIT 6";
         String tom = MySqlHelper.COLUMN_ID + " DESC LIMIT 3";
-        String whereHelp = MySqlHelper.COLUMN_HELP + " = ? " +" AND "+ MySqlHelper.COLUMN_DONE + " = ? "+" AND "+ MySqlHelper.COLUMN_NOT_DONE + " = ? ";
-        String[] args1 = new String[]{"1","0","0"};
-        String whereNotDone = MySqlHelper.COLUMN_NOT_DONE + "= ? " +" AND "+ MySqlHelper.COLUMN_DONE + " = ? "+" AND "+ MySqlHelper.COLUMN_HELP + " = ? ";
-        String[] args2 = new String[]{"1","0","0"};
+        String whereHelp = MySqlHelper.COLUMN_HELP + " = ? " + " AND " + MySqlHelper.COLUMN_DONE + " = ? " + " AND " + MySqlHelper.COLUMN_NOT_DONE + " = ? ";
+        String[] args1 = new String[]{"1", "0", "0"};
+        String whereNotDone = MySqlHelper.COLUMN_NOT_DONE + "= ? " + " AND " + MySqlHelper.COLUMN_DONE + " = ? " + " AND " + MySqlHelper.COLUMN_HELP + " = ? ";
+        String[] args2 = new String[]{"1", "0", "0"};
         switch (id) {
             case LOADER_TODAY:
                 return new CursorLoader(this, DailyTodoContentProvider.CONTENT_URI,
-                        null, null, null,today);
+                        null, null, null, today);
             case LOADER_TOM:
                 return new CursorLoader(this, DailyTodoContentProvider.CONTENT_URI,
-                        null, null, null,tom);
+                        null, null, null, tom);
             case LOADER_ARCHIVE:
                 return new CursorLoader(this, DailyTodoContentProvider.CONTENT_URI,
                         null, null, null, null);
@@ -553,10 +536,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        switch (loader.getId()){
+        switch (loader.getId()) {
             case LOADER_TODAY:
                 if (data != null) {
-                    Log.d(TAG, "We have " + data.getCount() + " items in today");
+                    //Log.d(TAG, "We have " + data.getCount() + " items in today");
                     if (data.moveToFirst()) {
                         List<TodoDaily> items = new ArrayList<>();
                         do {
@@ -569,21 +552,21 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
             case LOADER_TOM:
-                String[]goal;
+                String[] goal;
                 String d;
                 if (data != null) {
-                    Log.d(TAG, "We have " + data.getCount() + " items in tom");
+                    //Log.d(TAG, "We have " + data.getCount() + " items in tom");
                     if (data.moveToFirst()) {
                         List<TodoDaily> items = new ArrayList<>();
-                        int j =0;
+                        int j = 0;
                         do {
                             items.add(TodoDaily.buildFromCursor(data));
                             TodoDaily daily = items.get(j);
                             j++;
-                            if(daily.getTittle()==null&&daily.getDescription()==null){
+                            if (daily.getTittle() == null && daily.getDescription() == null) {
                                 sendToTom = new HashSet<>(MySharedPref.getSetSharedPref(MainActivity.this,
                                         MySharedPref.SET_OF_SHIFT, new HashSet<String>()));
-                                if(!sendToTom.isEmpty()) {
+                                if (!sendToTom.isEmpty()) {
                                     Uri uri = Uri.parse(DailyTodoContentProvider.CONTENT_URI + "/" + daily.getId());
                                     Iterator<String> i = sendToTom.iterator();
                                     d = i.next();
@@ -602,7 +585,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case LOADER_ARCHIVE:
                 if (data != null) {
-                    Log.d(TAG, "We have " + data.getCount() + " items in archive");
+                    //Log.d(TAG, "We have " + data.getCount() + " items in archive");
                     if (data.moveToFirst()) {
                         List<TodoDaily> items = new ArrayList<>();
                         do {
@@ -615,7 +598,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case LOADER_HELP:
                 if (data != null) {
-                    Log.d(TAG, "We have " + data.getCount() + " items in help");
+                    //Log.d(TAG, "We have " + data.getCount() + " items in help");
                     if (data.moveToFirst()) {
                         List<TodoDaily> items = new ArrayList<>();
                         do {
@@ -623,22 +606,20 @@ public class MainActivity extends AppCompatActivity
                         } while (data.moveToNext());
 
                         helpAdepter.swapToday(items);
-                    }
-                    else
+                    } else
                         helpAdepter.swapToday(new ArrayList<TodoDaily>());
                 }
                 break;
             case LOADER_NOT_DONE:
                 if (data != null) {
-                    Log.d(TAG, "We have " + data.getCount() + " items in not done");
+                    //Log.d(TAG, "We have " + data.getCount() + " items in not done");
                     if (data.moveToFirst()) {
                         List<TodoDaily> items = new ArrayList<>();
                         do {
                             items.add(TodoDaily.buildFromCursor(data));
                         } while (data.moveToNext());
                         notDoneAdepter.swapToday(items);
-                    }
-                    else {
+                    } else {
                         notDoneAdepter.swapToday(new ArrayList<TodoDaily>());
                     }
                     MySharedPref.putIntSharedPref(this, MySharedPref.CHECK_IF_NOT_DONE_EMPTY, notDoneAdepter.getItemCount());
@@ -650,7 +631,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
-        Log.d(TAG, "Loader reset");
+        //Log.d(TAG, "Loader reset");
     }
 
     @Override
@@ -688,7 +669,6 @@ public class MainActivity extends AppCompatActivity
             LayoutInflater inflater = MainActivity.this.getLayoutInflater();
             View pagerView = inflater.inflate(R.layout.recycler_for_layouts, null);
             RecyclerView recyclerView = null;
-            TextView textView = null;
             switch (position) {
                 case 0:
                     recyclerView = (RecyclerView) pagerView.findViewById(R.id.recycler_view_today);
@@ -717,3 +697,4 @@ public class MainActivity extends AppCompatActivity
         }
     }
 }
+
