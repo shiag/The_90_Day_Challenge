@@ -1,38 +1,39 @@
-package com.sgmasterappsgmail.The90DayChallenge.activitys;
+        package com.sgmasterappsgmail.The90DayChallenge.activitys;
 
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Color;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-//import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.TimePicker;
+        import android.content.Context;
+        import android.content.DialogInterface;
+        import android.content.Intent;
+        import android.graphics.Color;
+        import android.support.v7.app.AlertDialog;
+        import android.support.v7.app.AppCompatActivity;
+        import android.os.Bundle;
+        import android.util.Log;
+        import android.view.LayoutInflater;
+        import android.view.View;
+        import android.widget.CheckBox;
+        import android.widget.CompoundButton;
+        import android.widget.EditText;
+        import android.widget.TextView;
+        import android.widget.TimePicker;
 
-import com.sgmasterappsgmail.The90DayChallenge.R;
-import com.sgmasterappsgmail.The90DayChallenge.Tools.Alarm;
-import com.sgmasterappsgmail.The90DayChallenge.Tools.MySharedPref;
+        import com.sgmasterappsgmail.The90DayChallenge.R;
+        import com.sgmasterappsgmail.The90DayChallenge.Tools.Alarm;
+        import com.sgmasterappsgmail.The90DayChallenge.Tools.MySharedPref;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
+        import java.text.SimpleDateFormat;
+        import java.util.Calendar;
+        import java.util.Locale;
 
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+        import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 
 public class SettingsActivity extends AppCompatActivity {
-    //private static final String TAG = SettingsActivity.class.getSimpleName();
+    private static final String TAG = SettingsActivity.class.getSimpleName();
     private TextView notifyN1, notifyN2, notifyD1, notifyD2, notifyW1, notifyW2, status, setN, setD, setW;
     private CheckBox checkBoxN, checkBoxD, checkBoxW;
     private long nightHour, dayHour;
     private int weekDayNum;
+    private boolean checkN, checkD, checkW;
     private static final int lightGrayColor = Color.parseColor("#FFCECECE");
     private static final int darkGrayColor = Color.parseColor("#FF6C6C6C");
     private static final int primaryColor = Color.parseColor("#8f3e97");
@@ -53,14 +54,14 @@ public class SettingsActivity extends AppCompatActivity {
         initReminderTime();
         setUpGui();
         initCheckBox();
-        //Log.d(TAG, "hour is " + nightHour);
-        //Log.d(TAG, "CHECK is " + checkD);
+        Log.d(TAG, "hour is " + nightHour);
+        Log.d(TAG, "CHECK is " + checkD);
     }
 
     private void initCheckBox() {
-        checkBoxN.setChecked(MySharedPref.getBoolSharedPref(this, MySharedPref.NIGHT_CHECK, true));
-        checkBoxD.setChecked(MySharedPref.getBoolSharedPref(this, MySharedPref.DAY_CHECK, true));
-        checkBoxW.setChecked(MySharedPref.getBoolSharedPref(this, MySharedPref.WEEK_CHECK, true));
+        checkN = MySharedPref.getBoolSharedPref(this, MySharedPref.NIGHT_CHECK, true);
+        checkD = MySharedPref.getBoolSharedPref(this, MySharedPref.DAY_CHECK, true);
+        checkW = MySharedPref.getBoolSharedPref(this, MySharedPref.WEEK_CHECK, true);
         setNonClickListener(1);
         setDonClickListener(2);
         setWonClickListener();
@@ -230,7 +231,7 @@ public class SettingsActivity extends AppCompatActivity {
                 cal.set(Calendar.HOUR_OF_DAY, timePicker.getCurrentHour());
                 cal.set(Calendar.MINUTE, timePicker.getCurrentMinute());
                 if (i == 1) {
-                    // Log.d(TAG, "NIGHT");
+                    Log.d(TAG, "NIGHT");
                     MySharedPref.putIntSharedPref(SettingsActivity.this, MySharedPref.NIGHT_HOUR, timePicker.getCurrentHour());
                     MySharedPref.putIntSharedPref(SettingsActivity.this, MySharedPref.NIGHT_MIN, timePicker.getCurrentMinute());
                     Alarm.createAlarmForNight(SettingsActivity.this);
@@ -239,7 +240,7 @@ public class SettingsActivity extends AppCompatActivity {
                     todayDate = getResources().getString(R.string.notify_n) + new SimpleDateFormat(" h:mm a.", Locale.ENGLISH).format(nightHour);
                     notifyN2.setText(todayDate);
                 } else {
-                    // Log.d(TAG, "DAY");
+                    Log.d(TAG, "DAY");
                     MySharedPref.putIntSharedPref(SettingsActivity.this, MySharedPref.DAY_HOUR, timePicker.getCurrentHour());
                     MySharedPref.putIntSharedPref(SettingsActivity.this, MySharedPref.DAY_MIN, timePicker.getCurrentMinute());
                     Alarm.createAlarmForDay(SettingsActivity.this);
